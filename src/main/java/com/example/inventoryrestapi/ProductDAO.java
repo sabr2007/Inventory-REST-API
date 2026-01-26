@@ -1,90 +1,117 @@
 package com.example.inventoryrestapi;
 import java.sql.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDAO {
 
-    public void addProduct(Product p){
-        String sql = "INSERT INTO Products (name, price, barcode) VALUES(?, ?, ?)";
+    public Product addProduct(Product p) {
+        String sql = "INSERT INTO Products (name, price, barcode) VALUES(?, ?, ?) RETURNING id";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)){
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, p.getName());
             pstmt.setDouble(2, p.getPrice());
             pstmt.setInt(3, p.getBarcode());
-            pstmt.executeUpdate();
-            System.out.println("product was added succesfuly");
 
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void getAllProduct(){
-        String sql = "SELECT * FROM PRODUCTS";
-        try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)){
-
-            while(rs.next()){
-                System.out.println(rs.getInt("id") + " " + rs.getString("name") + " " + rs.getDouble("price"));
+            ResultSet rs = pstmt.executeQuery(); // вместо executeUpdate()
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                return new Product(generatedId, p.getName(), p.getPrice(), p.getBarcode());
             }
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public void updateProductPrice(int id, double newPrice){
-        String sql = "UPDATE Products SET Price = ? WHERE id = ?";
-        try(Connection conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
+    public List<Product> getAllProducts() {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Products";
 
-            pstmt.setDouble(1, newPrice);
-            pstmt.setInt(2, id);
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Product p = new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("barcode")
+                );
+                products.add(p);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public Product getProductById(int id) {
+        String sql = "SELECT * FROM Products WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("barcode")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Product updateProduct(int id, Product updatedProduct) {
+        String sql = "UPDATE Products SET name = ?, price = ?, barcode = ? WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, updatedProduct.getName());
+            pstmt.setDouble(2, updatedProduct.getPrice());
+            pstmt.setInt(3, updatedProduct.getBarcode());
+            pstmt.setInt(4, id);
 
             int rowsAffected = pstmt.executeUpdate();
-            if(rowsAffected > 0)
-                System.out.println("successfully changed");
-            else
-                System.out.println("no product with such id");
+            if (rowsAffected > 0) {
+                return new Product(id, updatedProduct.getName(),
+                        updatedProduct.getPrice(), updatedProduct.getBarcode());
+            }
 
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public void deleteProduct(int id){
-        String sql = "DELETE FROM Products WHERE ID = ?";
-        try(Connection conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
+    public boolean deleteProduct(int id) {
+        String sql = "DELETE FROM Products WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
             int rowsDeleted = pstmt.executeUpdate();
-            if(rowsDeleted > 0)
-                System.out.println("successfully deleted");
-            else
-                System.out.println("no product with such id");
+            return rowsDeleted > 0;
 
-
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void sortProducts(){
-        String sql = "SELECT id, name, price, barcode FROM products GROUP BY id ORDER BY price DESC";
-        try(Connection conn = DBConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)){
-
-            while(rs.next()){
-                System.out.println(rs.getInt("id") + " " + rs.getString("name")
-                        + " " + rs.getDouble("price") + " " + rs.getInt("barcode"));
-            }
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
+        return false;
     }
 
 }

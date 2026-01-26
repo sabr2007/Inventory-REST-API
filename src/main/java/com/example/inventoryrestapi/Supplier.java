@@ -6,7 +6,12 @@ public class Supplier extends AbstractItem {
     private String companyPhone;
     private String companyCountry;
 
-    public Supplier() {}
+    public Supplier(String companyName, String companyPhone, String companyCountry, int id){
+        super(id);
+        this.companyName = companyName;
+        this.companyPhone = companyPhone;
+        this.companyCountry = companyCountry;
+    }
 
 
 

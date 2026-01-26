@@ -6,7 +6,19 @@ public class Product extends AbstractItem {
     private double price;
     private int barcode;
 
-    public Product() {}
+
+        // Конструктор №1: пустой для Spring (чтобы создавать объекты из JSON)
+        public Product() {
+            super(0); // передаём временный id в AbstractItem
+        }
+
+        // Конструктор №2: со всеми полями (для создания объектов из БД)
+        public Product(int id, String name, double price, int barcode) {
+            super(id); // передаём настоящий id в AbstractItem
+            this.name = name;
+            this.price = price;
+            this.barcode = barcode;
+        }
 
 
     public String getName(){
@@ -39,7 +51,9 @@ public class Product extends AbstractItem {
     public void setBarcode(int barcode){
         this.barcode = barcode;
     }
-
+    public void setId(int id) {
+        // этот метод пустой, но он нужен чтобы Spring мог установить id при десериализации
+    }
 
     @Override
     public String toString() {
