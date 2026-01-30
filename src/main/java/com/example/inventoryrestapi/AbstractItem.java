@@ -1,5 +1,4 @@
 package com.example.inventoryrestapi;
-
 import java.util.Objects;
 public abstract class AbstractItem {
 

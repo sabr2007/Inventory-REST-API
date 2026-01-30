@@ -1,5 +1,4 @@
 package com.example.inventoryrestapi;
-
 import java.util.ArrayList;
 public class Inventory {
 
