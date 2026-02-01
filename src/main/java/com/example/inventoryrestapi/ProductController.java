@@ -1,6 +1,7 @@
 package com.example.inventoryrestapi;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
 //http://localhost:8080/api/products/
 
 @RestController
@@ -21,7 +22,7 @@ public class ProductController {
     public Product getProductById(@PathVariable int id) {
         Product product = productDAO.getProductById(id);
         if(product == null) {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new RuntimeException("product not found with id: " + id);
         }
         return product;
     }
@@ -41,7 +42,7 @@ public class ProductController {
     public Product updateProduct(@PathVariable int id, @RequestBody Product product) {
         Product updated = productDAO.updateProduct(id, product);
         if(updated == null) {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new RuntimeException("no product with id " + id);
         }
         return updated;
     }
@@ -51,9 +52,9 @@ public class ProductController {
     public String deleteProduct(@PathVariable int id) {
         boolean deleted = productDAO.deleteProduct(id);
         if(deleted) {
-            return "Product deleted successfully";
+            return "product deleted successfully";
         } else {
-            throw new RuntimeException("Product not found with id: " + id);
+            throw new RuntimeException("no product with id: " + id);
         }
     }
 
