@@ -74,6 +74,31 @@ public class ProductDAO {
         return null;
     }
 
+    public List<Product> sortProducts() {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Products ORDER BY PRICE DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Product p = new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("barcode")
+                );
+                products.add(p);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+
     public Product updateProduct(int id, Product updatedProduct) {
         String sql = "UPDATE Products SET name = ?, price = ?, barcode = ? WHERE id = ?";
 

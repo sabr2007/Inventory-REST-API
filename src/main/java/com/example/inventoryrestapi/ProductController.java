@@ -5,6 +5,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+
 public class ProductController {
 
     private ProductDAO productDAO = new ProductDAO();
@@ -25,6 +26,10 @@ public class ProductController {
         return product;
     }
 
+    @GetMapping("/sort")
+    public List<Product> sortProductByPrice(){
+        return productDAO.sortProducts();
+    }
 
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
@@ -51,4 +56,5 @@ public class ProductController {
             throw new RuntimeException("Product not found with id: " + id);
         }
     }
+
 }
