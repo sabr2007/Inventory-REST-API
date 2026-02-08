@@ -32,20 +32,11 @@ public class Product extends AbstractItem {
 
 
     public void setPrice(double price){
-        if(price < 0){
-            System.out.println("price cannot be negative");
-        } else {
-            this.price = price;
-        }
+        this.price = price;
     }
     public void setName(String name){
-        if(name != null){
-            this.name = name;
-        } else {
-            System.out.println("name have to be not null");
-        }
+        this.name = name;
     }
-
     public void setBarcode(int barcode){
         this.barcode = barcode;
     }

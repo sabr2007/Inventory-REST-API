@@ -5,7 +5,20 @@ import java.util.List;
 
 public class ProductDAO {
 
+    private void validateProduct(Product p) {
+        if (p.getName() == null || p.getName().isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be empty");
+        }
+        if (p.getPrice() < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
+        if (p.getBarcode() < 10000 || p.getBarcode() > 99999) {
+            throw new IllegalArgumentException("Barcode must be exactly 5 digits (10000-99999)");
+        }
+    }
+
     public Product addProduct(Product p) {
+        validateProduct(p);
         String sql = "INSERT INTO Products (name, price, barcode) VALUES(?, ?, ?) RETURNING id";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -100,6 +113,7 @@ public class ProductDAO {
 
 
     public Product updateProduct(int id, Product updatedProduct) {
+        validateProduct(updatedProduct);
         String sql = "UPDATE Products SET name = ?, price = ?, barcode = ? WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
