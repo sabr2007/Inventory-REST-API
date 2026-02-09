@@ -2,91 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
+    <title>Inventory Simple</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        h1 { text-align: center; margin-bottom: 20px; }
-
-        .container { max-width: 800px; margin: 0 auto; }
-
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        .container {
+            width: 600px;
+            margin: 0 auto;
+        }
         .form-section {
-            background: white; padding: 20px; border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;
+            border: 1px solid black;
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        .form-section h2 { margin-bottom: 12px; }
-        .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .form-row input {
-            flex: 1; padding: 8px 12px; border: 1px solid #ccc;
-            border-radius: 4px; font-size: 14px; min-width: 120px;
-            -moz-appearance: textfield;
+        input {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 5px;
         }
-        .form-row input::-webkit-outer-spin-button,
-        .form-row input::-webkit-inner-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
-        .btn {
-            padding: 8px 16px; border: 2px solid #333; border-radius: 4px;
-            cursor: pointer; font-size: 14px; color: #333; background: white;
-        }
-        .btn:hover { background: #f0f0f0; }
-
-        .actions { display: flex; gap: 8px; margin-top: 12px; }
-
-        .error-msg {
-            background: white; color: #333; padding: 10px;
-            border: 2px solid #333; border-radius: 4px; margin-bottom: 12px; display: none;
-        }
-
         table {
-            width: 100%; border-collapse: collapse; background: white;
-            border-radius: 8px; overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #333; color: white; }
-        tr:hover { background: #f9f9f9; }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .error-msg {
+            color: red;
+            display: none;
+            margin-bottom: 10px;
+        }
 
-        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Inventory</h1>
 
-        <div class="form-section">
-            <h2 id="form-title">Add Product</h2>
-            <div class="error-msg" id="error-msg"></div>
-            <div class="form-row">
-                <input type="text" id="name" placeholder="Name">
-                <input type="number" id="price" placeholder="Price" step="0.01">
-                <input type="number" id="barcode" placeholder="Barcode">
-            </div>
-            <div class="actions">
-                <button class="btn" id="submit-btn" onclick="submitForm()">Add</button>
-                <button class="btn" id="cancel-btn" onclick="cancelEdit()" style="display:none">Cancel</button>
-            </div>
-        </div>
+<div class="container">
+    <h1>Inventory System</h1>
 
-        <div class="table-header">
-            <h2>Products</h2>
-            <button class="btn" onclick="sortProducts()">Sort by Price</button>
-        </div>
+    <div class="form-section">
+        <h2 id="form-title">Add Product</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Barcode</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="product-table"></tbody>
-        </table>
+        <div class="error-msg" id="error-msg"></div>
+
+        <label>Name:</label>
+        <input type="text" id="name">
+
+        <label>Price:</label>
+        <input type="number" id="price" step="0.01">
+
+        <label>Barcode:</label>
+        <input type="number" id="barcode">
+
+        <br>
+        <button id="submit-btn" onclick="submitForm()">Add</button>
+        <button id="cancel-btn" onclick="cancelEdit()" style="display:none">Cancel</button>
     </div>
+
+    <div style="margin-bottom: 10px;">
+        <h2>Product List</h2>
+        <button onclick="sortProducts()">Sort by Price</button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Barcode</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="product-table">
+        </tbody>
+    </table>
+</div>
 
 <script>
     const API = '/api/products';
@@ -107,8 +104,8 @@
                 <td>${p.price}</td>
                 <td>${p.barcode}</td>
                 <td>
-                    <button class="btn" onclick="startEdit(${p.id}, '${p.name}', ${p.price}, ${p.barcode})">Edit</button>
-                    <button class="btn" onclick="deleteProduct(${p.id})">Delete</button>
+                    <button onclick="startEdit(${p.id}, '${p.name}', ${p.price}, ${p.barcode})">Edit</button>
+                    <button onclick="deleteProduct(${p.id})">Delete</button>
                 </td>
             </tr>
         `).join('');
@@ -154,9 +151,8 @@
         document.getElementById('name').value = name;
         document.getElementById('price').value = price;
         document.getElementById('barcode').value = barcode;
-        document.getElementById('form-title').textContent = 'edit Product';
-        document.getElementById('submit-btn').textContent = 'save';
-        document.getElementById('submit-btn').className = 'btn';
+        document.getElementById('form-title').textContent = 'Edit Product';
+        document.getElementById('submit-btn').textContent = 'Save';
         document.getElementById('cancel-btn').style.display = 'inline-block';
     }
 
@@ -165,9 +161,8 @@
         document.getElementById('name').value = '';
         document.getElementById('price').value = '';
         document.getElementById('barcode').value = '';
-        document.getElementById('form-title').textContent = 'add Product';
-        document.getElementById('submit-btn').textContent = 'add';
-        document.getElementById('submit-btn').className = 'btn';
+        document.getElementById('form-title').textContent = 'Add Product';
+        document.getElementById('submit-btn').textContent = 'Add';
         document.getElementById('cancel-btn').style.display = 'none';
     }
 
@@ -185,5 +180,6 @@
 
     loadProducts();
 </script>
+
 </body>
 </html>

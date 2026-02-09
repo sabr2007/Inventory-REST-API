@@ -7,13 +7,13 @@ public class ProductDAO {
 
     private void validateProduct(Product p) {
         if (p.getName() == null || p.getName().isBlank()) {
-            throw new IllegalArgumentException("Product name cannot be empty");
+            throw new IllegalArgumentException("product name cannot be empty");
         }
         if (p.getPrice() < 0) {
-            throw new IllegalArgumentException("Price cannot be negative");
+            throw new IllegalArgumentException("price cannot be negative");
         }
         if (p.getBarcode() < 10000 || p.getBarcode() > 99999) {
-            throw new IllegalArgumentException("Barcode must be exactly 5 digits (10000-99999)");
+            throw new IllegalArgumentException("barcode must be exactly 5 digits");
         }
     }
 
